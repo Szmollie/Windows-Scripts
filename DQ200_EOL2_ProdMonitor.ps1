@@ -1,76 +1,5 @@
-﻿####################################################################################################
-# Open DAD2506N
-Start-Process "cmd.exe" -ArgumentList '/c "C:\Program Files\SolarWinds\Dameware Mini Remote Control x64\DWRCC.exe" -c: -h: -m:DAD2506N.ot1.vitesco.com -u:svo14419 -p:DebrecenTesteng2025+ -d:OT1 -a:2 -prxa:10.116.119.98 -prxp:6127' -WindowStyle Hidden
 
-# Wait for Excel to open
-Start-Sleep -Seconds 10
-
-# Get the window ID of Excel
-$window1 = Get-Process | Where-Object { $_.MainWindowTitle -like "*Dameware*" }
-
-# Move the window to a specific position (e.g., x=100, y=100)
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public class User32 {
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
-}
-"@
-# ($window.MainWindowHandle, Xpos_Screen[map:(left)-5<y<2000(right)],Ypos_Screen[map:(top)600<y<2000(bottom)],x,WinHeight[map:(short)500<y<1200(tall)]
-[User32]::MoveWindow($window1[0].MainWindowHandle, 0, 0, 600, 500, $true)
-
-
-####################################################################################################
-# Open DAD2536N
-Start-Process "cmd.exe" -ArgumentList '/c "C:\Program Files\SolarWinds\Dameware Mini Remote Control x64\DWRCC.exe" -c: -h: -m:DAD2536N.ot1.vitesco.com -u:svo14419 -p:DebrecenTesteng2025+ -d:OT1 -a:2 -prxa:10.116.119.98 -prxp:6127' -WindowStyle Hidden
-
-# Wait for Excel to open
-Start-Sleep -Seconds 10
-
-# Get the window ID of Excel
-$window2 = Get-Process | Where-Object { $_.MainWindowTitle -like "*Dameware*" }
-
-# Move the window to a specific position (e.g., x=100, y=100)
-
-####################################################################################################
-# Open DAD2501N
-Start-Process "cmd.exe" -ArgumentList '/c "C:\Program Files\SolarWinds\Dameware Mini Remote Control x64\DWRCC.exe" -c: -h: -m:DAD2501N.ot1.vitesco.com -u:svo14419 -p:DebrecenTesteng2025+ -d:OT1 -a:2 -prxa:10.116.119.98 -prxp:6127' -WindowStyle Hidden
-
-# Wait for Excel to open
-Start-Sleep -Seconds 10
-
-# Get the window ID of Excel
-$window3 = Get-Process | Where-Object { $_.MainWindowTitle -like "*DameWare*" }
-
-# Move the window to a specific position (e.g., x=100, y=100)
-# ($window.MainWindowHandle, Xpos_Screen[map:(left)-5<y<2000(right)],Ypos_Screen[map:(top)600<y<2000(bottom)],x,WinHeight[map:(short)500<y<1200(tall)]
-[User32]::MoveWindow($window3[2].MainWindowHandle, 1200, 0, 600, 500, $true)
-
-
-####################################################################################################
-# Open DAD2507N
-Start-Process "cmd.exe" -ArgumentList '/c "C:\Program Files\SolarWinds\Dameware Mini Remote Control x64\DWRCC.exe" -c: -h: -m:DAD2507N.ot1.vitesco.com -u:svo14419 -p:DebrecenTesteng2025+ -d:OT1 -a:2 -prxa:10.116.119.98 -prxp:6127' -WindowStyle Hidden
-
-# Wait for Excel to open
-Start-Sleep -Seconds 10
-
-# Get the window ID of Excel
-$window4 = Get-Process | Where-Object { $_.MainWindowTitle -like "*DameWare*" }
-
-# Move the window to a specific position (e.g., x=100, y=100)
-# ($window.MainWindowHandle, Xpos_Screen[map:(left)-5<y<2000(right)],Ypos_Screen[map:(top)600<y<2000(bottom)],x,WinHeight[map:(short)500<y<1200(tall)]
-[User32]::MoveWindow($window4[3].MainWindowHandle, 1200, 520, 600, 500, $true)
-
-
-
-
-
-
-
-
-<#
-# Define MoveWindow once
+# Load the MoveWindow function from user32.dll
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -80,28 +9,60 @@ public class User32 {
 }
 "@
 
-function Start-DamewareSession {
-    param (
-        [string]$machine,
-        [int]$x,
-        [int]$y
-    )
+# List of VNC files to open
+$vncFiles = @(
+    "ASB_I4_2534N.vnc",
+    "ASB_I5_2535N.vnc",
+    "ASB_II5_2511N.vnc",
+    "ASB_II6_2510N.vnc",
+    "ER_III5_2505N.vnc",
+    "ER_III6_2507N.vnc",
+    "ER_IV_5_2537N.vnc",
+    "FL_I1_2506N.vnc",
+    "FL_I3_2504N.vnc",
+    "FL_V1_2536N.vnc",
+    "RT_I4_2540N.vnc",
+    "RT_II2_2528N.vnc",
+    "RT_II4_2529N.vnc",
+    "RT_I2_2501N.vnc"
+    # Add the rest of your 14 files here
+)
 
-    $args = "/c `"C:\Program Files\SolarWinds\Dameware Mini Remote Control x64\DWRCC.exe`" -c: -h: -m:$machine -u:svo14419 -p:DebrecenTesteng2025+ -d:OT1 -a:2 -prxa:10.116.119.98 -prxp:6127"
-    $proc = Start-Process "cmd.exe" -ArgumentList $args -WindowStyle Hidden -PassThru
-    Start-Sleep -Seconds 10
+# Define window positions (adjust as needed for your screen layout)
+$positions = @(
+    @{X=0; Y=0},
+    @{X=350; Y=0},
+    @{X=700; Y=0},
+    @{X=0; Y=300},
+    @{X=350; Y=300},
+    @{X=700; Y=300},
+    @{X=0; Y=600},
+    @{X=350; Y=600},
+    @{X=700; Y=600},
+    @{X=0; Y=900},
+    @{X=350; Y=900},
+    @{X=700; Y=900},
+    @{X=0; Y=1200},
+    @{X=350; Y=1200},
+    @{X=700; Y=1200}
+    
+
+    # Add more positions for additional windows
+)
+
+# Launch and arrange each VNC session
+for ($i = 0; $i -lt $vncFiles.Count; $i++) {
+    $filePath = "T:\misc\VNC_Login_List\$($vncFiles[$i])"
+    $proc = Start-Process $filePath -PassThru
+    Start-Sleep -Seconds 6
+
+    # Refresh the process to ensure MainWindowHandle is available
     $proc.Refresh()
+
     if ($proc.MainWindowHandle -ne 0) {
-        [User32]::MoveWindow($proc.MainWindowHandle, $x, $y, 600, 500, $true)
+        $pos = $positions[$i]
+        [User32]::MoveWindow($proc.MainWindowHandle, $pos.X, $pos.Y, 370, 320, $true)
     } else {
-        Write-Host "Could not find window for $machine"
+        Write-Host "Window handle not found for $($vncFiles[$i])"
     }
 }
-
-# Launch sessions
-Start-DamewareSession -machine "DAD2506N.ot1.vitesco.com" -x 0 -y 0
-Start-DamewareSession -machine "DAD2536N.ot1.vitesco.com" -x 600 -y 0
-Start-DamewareSession -machine "DAD2501N.ot1.vitesco.com" -x 1200 -y 0
-Start-DamewareSession -machine "DAD2507N.ot1.vitesco.com" -x 1200 -y 520
-
-#>
