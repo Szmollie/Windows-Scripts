@@ -1,0 +1,2 @@
+net use /d T: 
+net use  T: "\\vt1.vitesco.com\SMT\didf6615\02_VITESCO\10_DQ200_CFD"
