@@ -1,0 +1,60 @@
+<html>
+<head>
+  <title>DMC List Entry</title>
+  <HTA:APPLICATION
+    ID="DMCEntryApp"
+    APPLICATIONNAME="DMC Entry"
+    BORDER="dialog"
+    SCROLL="no"
+    SINGLEINSTANCE="yes"
+    WINDOWSTATE="normal"
+  />
+  <script language="VBScript">
+    Sub AddDMCs()
+      Dim dmcInput, cleanedInput, fso, filePath, file, i, char
+
+      filePath = "P:\PinSwap\RT\Scripts\DMC_AddList.txt"
+      Set fso = CreateObject("Scripting.FileSystemObject")
+
+      ' Create the file if it doesn't exist
+      If Not fso.FileExists(filePath) Then
+        Set file = fso.CreateTextFile(filePath, True)
+        file.Close
+      End If
+
+      dmcInput = Trim(DMCBox.Value)
+
+      ' Remove all whitespace characters
+      cleanedInput = ""
+      For i = 1 To Len(dmcInput)
+        char = Mid(dmcInput, i, 1)
+        If char <> " " And char <> vbTab And char <> vbCr And char <> vbLf Then
+          cleanedInput = cleanedInput & char
+        End If
+      Next
+
+      ' Validate format: if multiple entries, must contain commas
+      If InStr(cleanedInput, ",") = 0 And InStr(cleanedInput, "A2C") > 0 Then
+        MsgBox "Please separate multiple DMC entries with commas (e.g., A2C...E,A2C...E)", vbExclamation
+        Exit Sub
+      End If
+
+      ' Append cleaned input to file without new line
+      Set file = fso.OpenTextFile(filePath, 8, True)
+      file.Write cleanedInput
+      file.Close
+
+      MsgBox "DMCs added successfully.", vbInformation
+
+      ' Close the HTA window
+      window.close
+    End Sub
+  </script>
+</head>
+<body style="font-family:Segoe UI; background-color:#f4f4f4; padding:20px;">
+  <h2>DMC List Entry</h2>
+  <label for="DMCBox">Enter DMCs (comma-separated):</label><br>
+  <textarea id="DMCBox" rows="10" cols="80" style="margin-top:10px;"></textarea><br><br>
+  <input type="button" value="Submit" onclick="AddDMCs" style="padding:5px 15px;">
+</body>
+</html>
