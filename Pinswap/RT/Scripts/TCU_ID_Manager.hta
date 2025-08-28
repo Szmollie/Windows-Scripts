@@ -8,10 +8,11 @@
     SCROLL="no"
     SINGLEINSTANCE="yes"
     WINDOWSTATE="normal"
+
   />
   <script language="VBScript">
     Sub AddDMCs()
-      Dim dmcInput, cleanedInput, fso, filePath, file, i, char
+      Dim dmcInput, cleanedInput, fso, filePath, file, i, char, DMCcounter
 
       filePath = "P:\PinSwap\RT\Scripts\DMC_AddList.txt"
       Set fso = CreateObject("Scripting.FileSystemObject")
@@ -33,11 +34,16 @@
         End If
       Next
 
-      ' Validate format: if multiple entries, must contain commas
-      If InStr(cleanedInput, ",") = 0 And InStr(cleanedInput, "A2C") > 0 Then
-        MsgBox "Please separate multiple DMC entries with commas (e.g., A2C...E,A2C...E)", vbExclamation
-        Exit Sub
-      End If
+		' Check if input starts with "A2C", contains no comma, and is not longer than 40 characters
+		If InStr(cleanedInput, ",") = 0 And Left(cleanedInput, 3) = "A2C" And Len(cleanedInput) <= 40 Then
+			DMCcounter = 1
+		Else
+			' Validate format: if multiple entries, must contain commas
+			If InStr(cleanedInput, ",") = 0 And InStr(cleanedInput, "A2C") > 0 Then
+				MsgBox "Please separate multiple DMC entries with commas (e.g., A2C...E,A2C...E)", vbExclamation
+				Exit Sub
+			End If
+		End If
 
       ' Append cleaned input to file without new line
       Set file = fso.OpenTextFile(filePath, 8, True)
